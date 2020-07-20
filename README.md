@@ -33,6 +33,7 @@ html_to_pdf.genratePdf(file, options).then(pdfBuffer => {
 ### html_to_pdf.genratePdf ( [file], [options], [callback] )
 
 **Parameters**
+
 `file` <[Object](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object "Object")> File object should have one of the follwing properties:
 
 - `url` <[string](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Data_structures#String_type "String")> Any public url for the PDF content .
