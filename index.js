@@ -5,7 +5,12 @@ const hb = require('handlebars')
 module.exports
 async function generatePdf(file, options, callback) {
   // we are using headless mode
-  const browser = await puppeteer.launch();
+  const browser = await puppeteer.launch({
+    args: [
+      '--no-sandbox',
+      '--disable-setuid-sandbox',
+    ],
+  });
   const page = await browser.newPage();
 
   if(file.content) {
