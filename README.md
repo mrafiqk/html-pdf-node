@@ -25,12 +25,12 @@ let options = { format: 'A4' };
 let file = { content: "<h1>Welcome to html-pdf-node</h1>" };
 // or //
 let file = { url: "https://example.com" };
-html_to_pdf.genratePdf(file, options).then(pdfBuffer => {
+html_to_pdf.generatePdf(file, options).then(pdfBuffer => {
   console.log("PDF Buffer:-", pdfBuffer);
 });
 ```
 
-### html_to_pdf.genratePdf ( [file], [options], [callback] )
+### html_to_pdf.generatePdf ( [file], [options], [callback] )
 
 **Parameters**
 

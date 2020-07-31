@@ -14,7 +14,7 @@ async function generatePdf(file, options, callback) {
   const page = await browser.newPage();
 
   if(file.content) {
-    console.log("Compiing the template with handlebars")
+    console.log("Compiling the template with handlebars")
     // we have compile our code with handlebars
     const template = hb.compile(file.content, { strict: true });
     const result = template(file.content);
@@ -29,7 +29,8 @@ async function generatePdf(file, options, callback) {
   return Promise.props(page.pdf(options))
     .then(async function(data) {
        await browser.close();
-       return { pdf: data.docs };
+
+       return Buffer.from(Object.values(data));
     }).asCallback(callback);
 }
 

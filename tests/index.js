@@ -20,7 +20,7 @@ describe('convert-html-to-pdf', function() {
   it('convert-html-to-pdf-with-callback', function(done) {
     html.generatePdf({ content: file }, { format: 'A4' }, function(err, result) {
       expect(err).to.be.null;
-      expect(result).to.be.an.instanceOf(Object);
+      expect(result).to.be.an.instanceOf(Buffer);
       done();
     });
   });
@@ -28,7 +28,7 @@ describe('convert-html-to-pdf', function() {
   it('convert-html-to-pdf-with-url', function(done) {
     html.generatePdf({ url: 'https://www.google.com/' }, { format: 'A4' }, function(err, result) {
       expect(err).to.be.null;
-      expect(result).to.be.an.instanceOf(Object);
+      expect(result).to.be.an.instanceOf(Buffer);
       done();
     });
   });
