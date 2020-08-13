@@ -43,8 +43,8 @@ async function generatePdfs(files, options, callback) {
     ],
   });
   let pdfs = [];
-  await Promise.map(files, async(file) => {
-    const page = await browser.newPage();
+  const page = await browser.newPage();
+  for(let file of files) {
     if(file.content) {
       console.log("Compiling the template with handlebars")
       // we have compile our code with handlebars
@@ -60,8 +60,7 @@ async function generatePdfs(files, options, callback) {
     delete pdfObj['content'];
     pdfObj['buffer'] = Buffer.from(Object.values(await page.pdf(options)));
     pdfs.push(pdfObj);
-    await page.close();
-  },{concurrency:20})
+  }
 
   return Promise.resolve(pdfs)
     .then(async function(data) {
