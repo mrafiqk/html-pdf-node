@@ -23,7 +23,9 @@ async function generatePdf(file, options, callback) {
     // We set the page content as the generated html by handlebars
     await page.setContent(html);
   } else {
-    await page.goto(file.url);
+    await page.goto(file.url, {
+      waitUntil: 'networkidle0', // wait for page to load completely
+    });
   }
 
   return Promise.props(page.pdf(options))
