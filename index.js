@@ -67,7 +67,9 @@ async function generatePdfs(files, options, callback) {
       // We set the page content as the generated html by handlebars
       await page.setContent(html);
     } else {
-      await page.goto(file.url);
+      await page.goto(file.url, {
+        waitUntil: 'networkidle0', // wait for page to load completely
+      });
     }
     let pdfObj = JSON.parse(JSON.stringify(file));
     delete pdfObj['content'];
