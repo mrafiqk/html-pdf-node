@@ -5,11 +5,17 @@ const hb = require('handlebars')
 module.exports
 async function generatePdf(file, options, callback) {
   // we are using headless mode
+  let args = [
+    '--no-sandbox',
+    '--disable-setuid-sandbox',
+  ];
+  if(options.args) {
+    args = options.args;
+    delete options.args;
+  }
+
   const browser = await puppeteer.launch({
-    args: [
-      '--no-sandbox',
-      '--disable-setuid-sandbox',
-    ],
+    args: args
   });
   const page = await browser.newPage();
 
@@ -36,11 +42,16 @@ async function generatePdf(file, options, callback) {
 
 async function generatePdfs(files, options, callback) {
   // we are using headless mode
+  let args = [
+    '--no-sandbox',
+    '--disable-setuid-sandbox',
+  ];
+  if(options.args) {
+    args = options.args;
+    delete options.args;
+  }
   const browser = await puppeteer.launch({
-    args: [
-      '--no-sandbox',
-      '--disable-setuid-sandbox',
-    ],
+    args: args
   });
   let pdfs = [];
   const page = await browser.newPage();
