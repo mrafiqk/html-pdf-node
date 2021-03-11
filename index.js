@@ -30,7 +30,7 @@ async function generatePdf(file, options, callback) {
     await page.setContent(html);
   } else {
     await page.goto(file.url, {
-      waitUntil: 'networkidle0', // wait for page to load completely
+      waitUntil:[ 'load', 'networkidle0'], // wait for page to load completely
     });
   }
 
