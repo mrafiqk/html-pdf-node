@@ -119,3 +119,4 @@ html_to_pdf.generatePdfs(file, options).then(output => {
   console.log("PDF Buffer:-", output); // PDF Buffer:- [{url: "https://example.com", name: "example.pdf", buffer: <PDF buffer>}]
 });
 ```
+Hey Read My Message !
