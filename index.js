@@ -32,6 +32,10 @@ async function generatePdf(file, options, callback) {
       waitUntil: 'networkidle0', // wait for page to load completely
     });
   } else {
+    //Accepts an object with a list of headers if present
+    if(file.headers){
+      await page.setExtraHTTPHeaders(file.headers);
+    }
     await page.goto(file.url, {
       waitUntil:[ 'load', 'networkidle0'], // wait for page to load completely
     });
@@ -73,6 +77,10 @@ async function generatePdfs(files, options, callback) {
         waitUntil: 'networkidle0', // wait for page to load completely
       });
     } else {
+      //Accepts an object with a list of headers if present
+      if(file.headers){
+        await page.setExtraHTTPHeaders(file.headers);
+      }
       await page.goto(file.url, {
         waitUntil: 'networkidle0', // wait for page to load completely
       });
