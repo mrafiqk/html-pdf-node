@@ -1,27 +1,27 @@
+/* eslint-disable no-param-reassign */
+/* eslint-disable no-await-in-loop */
+/* eslint-disable no-restricted-syntax */
 const puppeteer = require('puppeteer');
-var Promise = require('bluebird');
-const hb = require('handlebars')
-const inlineCss = require('inline-css')
-module.exports
+const Promise = require('bluebird');
+const hb = require('handlebars');
+const inlineCss = require('inline-css');
+
 async function generatePdf(file, options, callback) {
   // we are using headless mode
-  let args = [
-    '--no-sandbox',
-    '--disable-setuid-sandbox',
-  ];
-  if(options.args) {
+  let args = ['--no-sandbox', '--disable-setuid-sandbox'];
+  if (options.args) {
     args = options.args;
     delete options.args;
   }
 
   const browser = await puppeteer.launch({
-    args: args
+    args,
   });
   const page = await browser.newPage();
 
-  if(file.content) {
-    data = await inlineCss(file.content, {url:"/"});
-    console.log("Compiling the template with handlebars")
+  if (file.content) {
+    const data = await inlineCss(file.content, { url: '/' });
+    console.log('Compiling the template with handlebars');
     // we have compile our code with handlebars
     const template = hb.compile(data, { strict: true });
     const result = template(data);
@@ -33,37 +33,46 @@ async function generatePdf(file, options, callback) {
     });
   } else {
     await page.goto(file.url, {
-      waitUntil:[ 'load', 'networkidle0'], // wait for page to load completely
+      waitUntil: ['load', 'networkidle0'], // wait for page to load completely
     });
+  }
+  if (options.autoHeightAndSinglePage) {
+    await page.setViewport({
+      width: options.widthViewport, // special width in integer for autoHeightAndSinglePage
+      height: 1,
+      deviceScaleFactor: 1,
+    });
+    const height = await page.evaluate(() => document.documentElement.offsetHeight); // sir, -auto-height who wants
+    options.height = height;
+    options.width = `${String(options.widthViewport)}px`;
+    options.pageRanges = '1';
   }
 
   return Promise.props(page.pdf(options))
-    .then(async function(data) {
-       await browser.close();
-
-       return Buffer.from(Object.values(data));
-    }).asCallback(callback);
+    .then(async (data) => {
+      await browser.close();
+      return Buffer.from(Object.values(data));
+    })
+    .asCallback(callback);
 }
 
 async function generatePdfs(files, options, callback) {
   // we are using headless mode
-  let args = [
-    '--no-sandbox',
-    '--disable-setuid-sandbox',
-  ];
-  if(options.args) {
+  let args = ['--no-sandbox', '--disable-setuid-sandbox'];
+  if (options.args) {
     args = options.args;
+    // eslint-disable-next-line no-param-reassign
     delete options.args;
   }
   const browser = await puppeteer.launch({
-    args: args
+    args,
   });
-  let pdfs = [];
+  const pdfs = [];
   const page = await browser.newPage();
-  for(let file of files) {
-    if(file.content) {
-      data = await inlineCss(file.content, {url:"/"})
-      console.log("Compiling the template with handlebars")
+  for (const file of files) {
+    if (file.content) {
+      const data = await inlineCss(file.content, { url: '/' });
+      console.log('Compiling the template with handlebars');
       // we have compile our code with handlebars
       const template = hb.compile(data, { strict: true });
       const result = template(data);
@@ -77,17 +86,29 @@ async function generatePdfs(files, options, callback) {
         waitUntil: 'networkidle0', // wait for page to load completely
       });
     }
-    let pdfObj = JSON.parse(JSON.stringify(file));
-    delete pdfObj['content'];
-    pdfObj['buffer'] = Buffer.from(Object.values(await page.pdf(options)));
+    const pdfObj = JSON.parse(JSON.stringify(file));
+    delete pdfObj.content;
+    if (options.autoHeightAndSinglePage) {
+      await page.setViewport({
+        width: options.widthViewport, // special width in integer for autoHeightAndSinglePage
+        height: 1,
+        deviceScaleFactor: 1,
+      });
+      const height = await page.evaluate(() => document.documentElement.offsetHeight); // sir, -auto-height who wants
+      options.height = height;
+      options.width = `${String(options.widthViewport)}px`;
+      options.pageRanges = '1';
+    }
+    pdfObj.buffer = Buffer.from(Object.values(await page.pdf(options)));
     pdfs.push(pdfObj);
   }
 
   return Promise.resolve(pdfs)
-    .then(async function(data) {
-       await browser.close();
-       return data;
-    }).asCallback(callback);
+    .then(async (data) => {
+      await browser.close();
+      return data;
+    })
+    .asCallback(callback);
 }
 
 module.exports.generatePdf = generatePdf;
