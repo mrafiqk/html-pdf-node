@@ -2,21 +2,34 @@ const puppeteer = require('puppeteer');
 var Promise = require('bluebird');
 const hb = require('handlebars')
 const inlineCss = require('inline-css')
+
+//
+
 module.exports
+
+async function getBrowser(options){
+    let browser
+    if(options.useRemoteChrome && options.chromeRemoteWs){
+      browser = await puppeteer.connect({ browserWSEndpoint: options.chromeRemoteWs });
+    }else{
+      let args = [
+        '--no-sandbox',
+        '--disable-setuid-sandbox',
+      ];
+      if(options.args) {
+        args = options.args;
+        delete options.args;
+      }
+      browser = await puppeteer.launch({
+        args: args
+      });
+    }
+    return browser;
+}
+
 async function generatePdf(file, options, callback) {
   // we are using headless mode
-  let args = [
-    '--no-sandbox',
-    '--disable-setuid-sandbox',
-  ];
-  if(options.args) {
-    args = options.args;
-    delete options.args;
-  }
-
-  const browser = await puppeteer.launch({
-    args: args
-  });
+  const browser = await getBrowser(options);
   const page = await browser.newPage();
 
   if(file.content) {
@@ -46,18 +59,7 @@ async function generatePdf(file, options, callback) {
 }
 
 async function generatePdfs(files, options, callback) {
-  // we are using headless mode
-  let args = [
-    '--no-sandbox',
-    '--disable-setuid-sandbox',
-  ];
-  if(options.args) {
-    args = options.args;
-    delete options.args;
-  }
-  const browser = await puppeteer.launch({
-    args: args
-  });
+  const browser = await getBrowser(options);
   let pdfs = [];
   const page = await browser.newPage();
   for(let file of files) {
