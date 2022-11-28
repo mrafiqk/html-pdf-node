@@ -4,20 +4,27 @@ const hb = require('handlebars')
 const inlineCss = require('inline-css')
 module.exports
 async function generatePdf(file, options, callback) {
-  // we are using headless mode
-  let args = [
-    '--no-sandbox',
-    '--disable-setuid-sandbox',
-  ];
-  if(options.args) {
-    args = options.args;
-    delete options.args;
-  }
+  
+  let browser = options.browser
+  let page = options.page;
 
-  const browser = await puppeteer.launch({
-    args: args
-  });
-  const page = await browser.newPage();
+  if (!options.browser){
+    // we are using headless mode
+    let args = [
+      '--no-sandbox',
+      '--disable-setuid-sandbox',
+    ];
+    if(options.args) {
+      args = options.args;
+      delete options.args;
+    }
+    browser = await puppeteer.launch({
+      args: args
+    });
+  }
+  
+  if (!options.page)
+    page = await browser.newPage();
 
   if(file.content) {
     data = await inlineCss(file.content, {url:"/"});
