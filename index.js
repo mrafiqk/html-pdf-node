@@ -14,8 +14,15 @@ async function generatePdf(file, options, callback) {
     delete options.args;
   }
 
+  let executablePath = null;
+  if(options.executablePath) {
+    executablePath = options.executablePath;
+    delete options.executablePath;
+  }
+
   const browser = await puppeteer.launch({
-    args: args
+    args: args,
+    executablePath: executablePath
   });
   const page = await browser.newPage();
 
