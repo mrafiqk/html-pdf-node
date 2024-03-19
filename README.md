@@ -119,3 +119,13 @@ html_to_pdf.generatePdfs(file, options).then(output => {
   console.log("PDF Buffer:-", output); // PDF Buffer:- [{url: "https://example.com", name: "example.pdf", buffer: <PDF buffer>}]
 });
 ```
+
+
+***Usage with Font:***
+```js
+const woffFont = fs.readFileSync(`__pathToFontFile__`, 'base64');
+const pdfBuffer = await html_to_pdf.generatePdf(file, options, undefined, {
+name: fontName,
+data: woffFont,
+});
+```
